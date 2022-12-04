@@ -1,12 +1,31 @@
-
+import { styled } from '@mui/material/styles';
+import { Category } from '../../components/customer';
+import Header from '../../components/customer/Header/Header';
 
 const CustomerLayout = ({children}) => {
+
+const StyledRoot = styled('div')({
+  display: 'flex',
+  minHeight: '100%',
+  overflow: 'hidden',
+});
+
+const Main = styled('div')(() => ({
+  flexGrow: 1,
+  overflow: 'auto',
+  minHeight: '100%',
+  padding: '120px 16px 80px 16px',
+}));
     return (
-        <div className="h-screen w-screen">
-            
-            <main>{children}</main>
-        </div>
-        
+        <StyledRoot>
+            <Header/>
+
+            <Category/>
+
+            <Main>
+                {children}
+            </Main>   
+        </StyledRoot>
     )
 }
 

@@ -22,8 +22,7 @@ import {
   setUsername,
   setShowPassword,
 } from "../../../redux/login.slice";
-import {
-  setLogin, 
+import { 
   setAccessToken,
 } from "../../../redux/auth.slice";
 // ----------------------------------------------------------------------
@@ -42,9 +41,9 @@ export default function LoginForm() {
     try {
       const res = await axiosClient.post("/auth/login", loginData);
       dispatch(setPassword(""));
-      dispatch(setLogin(true));
       dispatch(setAccessToken(res.token));
-      localStorage.setItem('accessToken', res.token);
+      localStorage.setItem("accessToken", res.token);
+      localStorage.setItem("username", res.username);
       navigate("/admin", { replace: true });
     } catch (e) {
       console.log(e);

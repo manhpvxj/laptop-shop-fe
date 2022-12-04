@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, AppBar, Toolbar, Stack} from '@mui/material';
+import { Box, AppBar, Toolbar, IconButton } from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/bgBlur';
+// components
+import Iconify from '../../../utils/Iconify';
 //
-import { UserPopover } from '..';
+import Searchbar from './Searchbar';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +17,7 @@ const HEADER_DESKTOP = 92;
 
 
 const StyledRoot = styled(AppBar)(() => ({
-  ...bgBlur({ color: '#fff' }),
+  ...bgBlur({ color: '#F9FAFB' }),
   boxShadow: 'none',
     width: `calc(100% - ${NAV_WIDTH + 1}px)`,
 }));
@@ -31,21 +33,12 @@ Header.propTypes = {
   onOpenNav: PropTypes.func,
 };
 
-export default function Header() {
+export default function Header({ onOpenNav }) {
   return (
     <StyledRoot>
       <StyledToolbar>
+        <Searchbar />
         <Box sx={{ flexGrow: 1 }} />
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{
-            xs: 0.5,
-            sm: 1,
-          }}
-        >
-            <UserPopover />
-        </Stack>
       </StyledToolbar>
     </StyledRoot>
   );

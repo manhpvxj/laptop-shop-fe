@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
+import { Box, Drawer, Typography, Avatar } from '@mui/material';
 
 // components
 import NavSection from './navbar-section';
 //
 import navConfig from './navbar-config';
-import {store} from '../../../redux/store';
 // ----------------------------------------------------------------------
 
 const StyledAccount = styled('div')(() => ({
@@ -32,7 +31,7 @@ export default function Nav() {
             <Avatar src={""} alt="photoURL" />
             <Box className='ml-4'>
               <Typography variant="subtitle2" className="text-zinc-800">
-                {store.getState().login?.username}
+                {localStorage.getItem('username')}
               </Typography>
             </Box>
           </StyledAccount>

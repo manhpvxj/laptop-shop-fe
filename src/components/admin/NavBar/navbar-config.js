@@ -9,7 +9,7 @@ import { MdOutlineProductionQuantityLimits, MdCategory } from "react-icons/md"
 const navConfig = [
   {
     title: 'Dashboard',
-    path: '/admin/dashboard',
+    path: '/admin',
     icon: <TbDashboard/>,
   },
   {

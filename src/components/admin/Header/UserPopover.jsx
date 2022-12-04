@@ -1,16 +1,18 @@
 import { useState } from 'react';
 // @mui
 import { Box, Divider, Typography, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { usernameSelector } from '../../../redux/login.slice';
+import { setAccessToken } from '../../../redux/auth.slice';
+import { useNavigate } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 
-// ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -18,6 +20,12 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(setAccessToken(''));
+    navigate('/admin/login');
+  }
   const account = useSelector(usernameSelector);
   return (
     <>
@@ -68,7 +76,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>

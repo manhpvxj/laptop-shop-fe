@@ -1,6 +1,6 @@
 import AdminLayout from "../pages/layout/AdminLayout";
 import CustomerLayout from "../pages/layout/CustomerLayout";
-import { Login, home, Page404 } from "../pages/index";
+import { Login, home, Page404, ListProducts } from "../pages/index";
 
  
 const publicRouter = [
@@ -11,7 +11,7 @@ const publicRouter = [
         path: "/admin", layout: AdminLayout,
     },
     {
-        path: "/admin/products", layout: AdminLayout,
+        path: "/admin/products",component: ListProducts, layout: AdminLayout,
     },
     {
         path: "/admin/products/:id", layout: AdminLayout,

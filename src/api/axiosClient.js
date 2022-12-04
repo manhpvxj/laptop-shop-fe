@@ -9,7 +9,7 @@ axiosClient.interceptors.request.use(async (config) => {
     try {
       config.headers = {
         ...config.headers,
-        Authorization: token,
+        Authorization:`Bearer ${token}`,
       };
     } catch (e) {
       console.log(e);

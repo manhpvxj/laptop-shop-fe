@@ -1,16 +1,18 @@
 import { useState } from 'react';
 // @mui
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
+// utils
+import { bgBlur } from '../../../utils/bgBlur';
 // component
 import Iconify from '../../../utils/Iconify';
 
 // ----------------------------------------------------------------------
 
 const HEADER_MOBILE = 64;
-const HEADER_DESKTOP = 92;
 
-const StyledSearchbar = styled('div')(({ theme }) => ({
+const StyledSearchbar = styled('div')(() => ({
+  ...bgBlur({ color: '#F9FAFB' }),
   top: 0,
   left: 0,
   zIndex: 99,
@@ -19,12 +21,8 @@ const StyledSearchbar = styled('div')(({ theme }) => ({
   position: 'absolute',
   alignItems: 'center',
   height: HEADER_MOBILE,
-  padding: theme.spacing(0, 3),
-  boxShadow: theme.customShadows.z8,
-  [theme.breakpoints.up('md')]: {
-    height: HEADER_DESKTOP,
-    padding: theme.spacing(0, 5),
-  },
+  padding: '0 12px',
+  boxShadow: `0 8px 16px 0 ${alpha('#919EAB', 0.16 )}`,
 }));
 
 // ----------------------------------------------------------------------

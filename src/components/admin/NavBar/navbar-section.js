@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { NavLink as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink, useLocation } from "react-router-dom";
 // @mui
 import {
   Box,
@@ -18,6 +18,7 @@ import { useState } from "react";
 
 NavSection.propTypes = {
   data: PropTypes.array,
+  isHasChildren: PropTypes.bool,
 };
 const StyledNavItem = styled((props) => <ListItemButton {...props} />)(() => ({
   lineHeight: 22,
@@ -52,14 +53,21 @@ export default function NavSection({ data = [] }) {
     >
       {data.map((item) => {
         const { children = [] } = item;
+        const isHasChildren = children.length !== 0;
         return (
           <Box key={item.title}>
             <ListItemButton onClick={() => handleOpen(item.title)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.title} />
-              {open[item.title] ? <ExpandLess /> : <ExpandMore />}
+      {isHasChildren ? ( 
+        <>              
+        {open[item.title] ? <ExpandLess /> : <ExpandMore />}
+        </> ) : ( <></>)
+              }
             </ListItemButton>
-            <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+            {isHasChildren ? ( 
+        <>  
+          <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {children.map((child) => {
                   return (
@@ -73,7 +81,11 @@ export default function NavSection({ data = [] }) {
                   );
                 })}
               </List>
-            </Collapse>
+            </Collapse>            
+        </> ) : ( <></>)
+              }
+            
+          
           </Box>
         );
       })}
@@ -85,9 +97,10 @@ export default function NavSection({ data = [] }) {
 
 NavItem.propTypes = {
   item: PropTypes.object,
+  isHaschildren: PropTypes.bool,
 };
 
-function NavItem({ item }) {
+function NavItem({item}) {
   const { title, path, icon, children = [] } = item;
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -107,23 +120,21 @@ function NavItem({ item }) {
       }}
     >
       <StyledNavItemIcon>{icon}</StyledNavItemIcon>
-      <ListItemText primary={title} />
-      {open ? <ExpandLess /> : <ExpandMore />}
+      <ListItemText disableTypography primary={title} />
+        {open ? <ExpandLess /> : <ExpandMore />}
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div">
           {children.map((child) => {
             return (
               <ListItemButton
                 sx={{ ml: 12, height: 80 }}
-                component={RouterLink}
-                to={child.path}
               >
                 <ListItemText primary={child.title} />
               </ListItemButton>
             );
           })}
         </List>
-      </Collapse>
+      </Collapse>      
     </StyledNavItem>
   );
 }
