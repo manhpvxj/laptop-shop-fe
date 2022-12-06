@@ -1,30 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // @mui
+import { LoadingButton } from "@mui/lab";
 import {
-  Link,
-  Stack,
+  Checkbox,
   IconButton,
   InputAdornment,
+  Link,
+  Stack,
   TextField,
-  Checkbox,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 // components
-import Iconify from "../../../utils/Iconify";
 import axiosClient from "../../../api/axiosClient";
+import { setAccessToken } from "../../../redux/auth.slice";
 import {
-  usernameSelector,
   passwordSelector,
   setPassword,
-  showPasswordSelector,
-  setUsername,
   setShowPassword,
+  setUsername,
+  showPasswordSelector,
+  usernameSelector,
 } from "../../../redux/login.slice";
-import { 
-  setAccessToken,
-} from "../../../redux/auth.slice";
+import Iconify from "../../../utils/Iconify";
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -58,9 +55,7 @@ export default function LoginForm() {
           name="username"
           label="Username"
           value={loginData.username}
-          onChange={(e) =>
-            dispatch(setUsername(e.target.value))
-          }
+          onChange={(e) => dispatch(setUsername(e.target.value))}
         />
 
         <TextField
@@ -68,16 +63,12 @@ export default function LoginForm() {
           label="Password"
           type={showPassword ? "text" : "password"}
           value={loginData.password}
-          onChange={(e) => 
-            dispatch(setPassword(e.target.value))
-          }
+          onChange={(e) => dispatch(setPassword(e.target.value))}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  onClick={() => 
-                    dispatch(setShowPassword(!showPassword))
-                  }
+                  onClick={() => dispatch(setShowPassword(!showPassword))}
                   edge="end"
                 >
                   <Iconify

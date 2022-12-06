@@ -6,6 +6,8 @@ import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } f
 import { bgBlur } from '../../../utils/bgBlur';
 // component
 import Iconify from '../../../utils/Iconify';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchTextSelector, setSearchText } from '../../../redux/search.slice';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +31,8 @@ const StyledSearchbar = styled('div')(() => ({
 
 export default function Searchbar() {
   const [open, setOpen] = useState(false);
-
+  const dispatch = useDispatch();
+  const searchText = useSelector(searchTextSelector);
   const handleOpen = () => {
     setOpen(!open);
   };
@@ -53,6 +56,8 @@ export default function Searchbar() {
               autoFocus
               fullWidth
               disableUnderline
+              value={searchText}
+              onChange={(e) => dispatch(setSearchText(e.target.value))}
               placeholder="Search…"
               startAdornment={
                 <InputAdornment position="start">
@@ -61,9 +66,6 @@ export default function Searchbar() {
               }
               sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
             />
-            <Button variant="contained" onClick={handleClose}>
-              Search
-            </Button>
           </StyledSearchbar>
         </Slide>
       </div>

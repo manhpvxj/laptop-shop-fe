@@ -4,6 +4,7 @@ import {
     Box,
     List, ListItemButton, ListItemIcon, ListItemText
 } from "@mui/material";
+import {useNavigate} from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -12,6 +13,11 @@ CategoriesSection.propTypes = {
 };
 
 export default function CategoriesSection({ data = [] }) {
+  const navigate = useNavigate();
+  const gotoBrand = (brand) => {
+    navigate(`/category/${brand}`)
+  }
+
   return (
     <List
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
@@ -19,7 +25,7 @@ export default function CategoriesSection({ data = [] }) {
     >
       {data.map((item) => {
         return (
-          <Box key={item.title}>
+          <Box key={item.title} onClick={() => gotoBrand(item.id)}>
             <ListItemButton>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.title} />

@@ -7,26 +7,24 @@ import ProductCart from './ProductCart';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import axiosClient from '../../../api/axiosClient';
-import useDebounce from '../../../hooks/useDebounce';
-import { useSelector } from 'react-redux';
-import { searchTextSelector } from '../../../redux/search.slice';
+import { useParams } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function ProductsByBrandPage() {
   const [listProducts, setListProducts] = useState([]);
-  const search = useDebounce(useSelector(searchTextSelector), 1000);
+    const {brand} = useParams();
   useEffect(() => {
-    const getProductsList = async () => {
+    const getProductsListByBrand = async () => {
       const products = [];
-      const { data } = await axiosClient.get(`/customer/products?search=${search}`);
+      const { data } = await axiosClient.get(`/customer/products?category=${brand}`);
       data.forEach((e) => {
         products.push(e);
       })
       setListProducts(products);
      }; 
-     getProductsList()
-  }, [search]) 
+     getProductsListByBrand();
+  }, [brand]) 
 
   return (
     <>

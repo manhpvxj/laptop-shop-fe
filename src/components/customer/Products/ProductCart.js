@@ -30,7 +30,7 @@ const StyledRoot = styled('div')(() => ({
 
 // ----------------------------------------------------------------------
 
-export default function CartWidget() {
+export default function ProductCart() {
     const cartAmount = useSelector(cartSelector)
   return (
     <StyledRoot>

@@ -1,6 +1,13 @@
 import AdminLayout from "../pages/layout/AdminLayout";
 import CustomerLayout from "../pages/layout/CustomerLayout";
-import { Login, home, Page404, ListProducts } from "../pages/index";
+import {
+  Login,
+  HomePage,
+  Page404,
+  ListProducts,
+  ProductDetailPage,
+  ProductsByCategory,
+} from "../pages/index";
 
  
 const publicRouter = [
@@ -32,7 +39,10 @@ const publicRouter = [
         path: "/admin/users", layout: AdminLayout,
     },
     {
-        path: "/products/:id",
+        path: "/products/:id", component: ProductDetailPage, layout: CustomerLayout,
+    },
+    {
+        path: "category/:brand", component: ProductsByCategory, layout: CustomerLayout,
     },
     {
         path: "/cart",
@@ -41,7 +51,7 @@ const publicRouter = [
         path: "/thankyou",
     },
     {
-        path: "/", component: home, layout: CustomerLayout,
+        path: "/", component: HomePage, layout: CustomerLayout,
     },
     {
         path: "*", component: Page404,

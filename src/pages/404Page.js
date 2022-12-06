@@ -31,7 +31,7 @@ export default function Page404() {
             spelling.
           </Typography>
 
-          <Button to="/admin" size="large" variant="contained" component={RouterLink}>
+          <Button to="/" size="large" variant="contained" component={RouterLink}>
             Go to Home
           </Button>
         </StyledContent>

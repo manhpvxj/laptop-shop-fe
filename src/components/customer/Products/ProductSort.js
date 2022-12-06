@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Menu, Button, MenuItem, Typography } from '@mui/material';
 // component
 import Iconify from '../../../utils/Iconify';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchStatusSelector, setSearchStatus } from '../../../redux/search.slice';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +16,8 @@ const SORT_BY_OPTIONS = [
 
 export default function ShopProductSort() {
   const [open, setOpen] = useState(null);
-    const [status, setStatus] = useState('newest');
+  const status = useSelector(searchStatusSelector);
+  const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -23,9 +26,7 @@ export default function ShopProductSort() {
   const handleClose = () => {
     setOpen(null);
   };
-  const handleSort = (option) => {
-    setStatus(option);
-  }
+
   return (
     <>
       <Button
@@ -36,7 +37,7 @@ export default function ShopProductSort() {
       >
         Sort By:&nbsp;
         <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          {status}
+          {status.label}
         </Typography>
       </Button>
       <Menu
@@ -52,7 +53,7 @@ export default function ShopProductSort() {
             key={option.value}
             selected={option.value === status}
             onClick={() => {
-                handleSort(option.label);
+                dispatch(setSearchStatus(option));
                 handleClose();}}
             sx={{ typography: 'body2' }}
           >

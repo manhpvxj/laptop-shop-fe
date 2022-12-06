@@ -1,6 +1,6 @@
 import { ProductsPage } from "../../components/customer/index";
 
-const home = () => {
+const HomePage = () => {
     return (
         <>
         <ProductsPage/>
@@ -8,4 +8,4 @@ const home = () => {
     )
 }
 
-export default home
+export default HomePage

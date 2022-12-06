@@ -21,6 +21,7 @@ import {
 import Iconify from '../../../utils/Iconify';
 import ProductListHead from './TableHead';
 import axiosClient from '../../../api/axiosClient';
+import Scrollbar from '../../../utils/Scrollbar';
 import { Link } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
@@ -97,7 +98,7 @@ export default function ProductPage() {
         </Stack>
 
         <Card>
-
+          <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <ProductListHead
@@ -109,11 +110,11 @@ export default function ProductPage() {
                 <TableBody>
 
                   {listProducts.map((row) => {
-                    const { productId, name, priceSell, quantity} = row;
+                    const { id, name, priceSell, quantity} = row;
 
                     return (
-                      <TableRow hover key={productId} tabIndex={-1} role="checkbox">
-                        <TableCell align='left'>{productId}</TableCell>
+                      <TableRow hover key={id} tabIndex={-1} role="checkbox">
+                        <TableCell align='left'>{id}</TableCell>
                         <TableCell component="th" scope="row" padding="none" sx={{pl : 2}}>
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Typography variant="subtitle2" noWrap>
@@ -137,7 +138,7 @@ export default function ProductPage() {
                 </TableBody>
               </Table>
             </TableContainer>
-
+            </Scrollbar>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"

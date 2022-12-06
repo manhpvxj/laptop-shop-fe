@@ -20,7 +20,8 @@ export const CategoryConfig = () => {
 
     const categoriesConfig = listCategories.map((category, index) => {
         return {
-            title: category.name === 'Macbook' ? `${category.name}` : `Laptop ${category.name}`,
+            id: category.id,
+            title: category.name === 'Macbook' ? ` ${category.name}` : `Laptop ${category.name}`,
             icon: category.name === 'Macbook' ? <Iconify icon={'ic:twotone-apple'}/> : <Iconify icon={'ic:outline-laptop-windows'}/>
         }
     })
