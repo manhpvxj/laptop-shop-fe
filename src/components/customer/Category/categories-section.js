@@ -5,6 +5,8 @@ import {
     List, ListItemButton, ListItemIcon, ListItemText
 } from "@mui/material";
 import {useNavigate} from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setSearchBrand } from "../../../redux/search.slice";
 
 // ----------------------------------------------------------------------
 
@@ -13,9 +15,9 @@ CategoriesSection.propTypes = {
 };
 
 export default function CategoriesSection({ data = [] }) {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const gotoBrand = (brand) => {
-    navigate(`/category/${brand}`)
+    dispatch(setSearchBrand(brand));
   }
 
   return (

@@ -6,7 +6,6 @@ import {
   Page404,
   ListProducts,
   ProductDetailPage,
-  ProductsByCategory,
 } from "../pages/index";
 
  
@@ -40,9 +39,6 @@ const publicRouter = [
     },
     {
         path: "/products/:id", component: ProductDetailPage, layout: CustomerLayout,
-    },
-    {
-        path: "category/:brand", component: ProductsByCategory, layout: CustomerLayout,
     },
     {
         path: "/cart",

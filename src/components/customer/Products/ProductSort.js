@@ -1,10 +1,10 @@
 import { useState } from 'react';
 // @mui
-import { Menu, Button, MenuItem, Typography } from '@mui/material';
+import { Menu, Button, MenuItem, Typography, Stack } from '@mui/material';
 // component
 import Iconify from '../../../utils/Iconify';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchStatusSelector, setSearchStatus } from '../../../redux/search.slice';
+import { searchStatusSelector, setSearchBrand, setSearchStatus, setSearchText } from '../../../redux/search.slice';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +18,14 @@ export default function ShopProductSort() {
   const [open, setOpen] = useState(null);
   const status = useSelector(searchStatusSelector);
   const dispatch = useDispatch();
-
+  const handleResetFilter = () => {
+    dispatch(setSearchStatus({
+      value: 'newest',
+      label: 'Newest',
+    }));
+    dispatch(setSearchBrand(-1));
+    dispatch(setSearchText(''));
+  }
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -29,6 +36,7 @@ export default function ShopProductSort() {
 
   return (
     <>
+     <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
       <Button
         color="inherit"
         disableRipple
@@ -61,6 +69,8 @@ export default function ShopProductSort() {
           </MenuItem>
         ))}
       </Menu>
+      <Button color='inherit' onClick={handleResetFilter}>Reset</Button>
+      </Stack>
     </>
   );
 }

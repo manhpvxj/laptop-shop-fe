@@ -45,7 +45,7 @@ export default function ProductDetailCarousel({ images }) {
     slidesToShow: 1,
     draggable: false,
     slidesToScroll: 1,
-    adaptiveHeight: false,
+    adaptiveHeight: true,
     beforeChange: (current, next) => setCurrentIndex(next),
   };
 

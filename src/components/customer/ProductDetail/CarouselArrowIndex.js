@@ -40,11 +40,9 @@ export default function CarouselArrowIndex({
   total,
   onNext,
   onPrevious,
-  customIcon,
-  ...other
 }) {
   return (
-    <RootStyle {...other}>
+    <RootStyle>
       <ArrowStyle size="small" onClick={onPrevious}>
         <Iconify
           icon={"eva:arrow-left-fill"}
@@ -56,7 +54,7 @@ export default function CarouselArrowIndex({
       </ArrowStyle>
 
       <Typography variant="subtitle2">
-        {index + 1}/{total}
+        {index === -1 ? 1 :index + 1}/{total}
       </Typography>
 
       <ArrowStyle size="small" onClick={onNext}>
