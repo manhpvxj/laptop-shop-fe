@@ -75,14 +75,14 @@ export default function ProductPage() {
   useEffect( () => {
    const getProductsList = async () => {
     const products = [];
-    const { data } = await axiosClient.get("/customer/products");
+    const { data } = await axiosClient.get(`/customer/products?category=-1&search=&page=${page}&size=${rowsPerPage}`);
     data.forEach((e) => {
       products.push(e);
     })
     setListProducts(products);
    }; 
    getProductsList();
-    }, []);
+    }, [page, rowsPerPage]);
   return (
     <>
       <Container>

@@ -16,7 +16,9 @@ CategoriesSection.propTypes = {
 
 export default function CategoriesSection({ data = [] }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const gotoBrand = (brand) => {
+    navigate("/");
     dispatch(setSearchBrand(brand));
   }
 

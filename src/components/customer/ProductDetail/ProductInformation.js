@@ -3,8 +3,9 @@ import { Box, Button, Divider, IconButton, Stack, Typography } from '@mui/materi
 import { styled } from '@mui/material/styles';
 import { fCurrency } from '../../../utils/formatCurrency';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../../redux/cart.slice';
+import { increaseQuantity, decreaseQuantity, addToCart } from '../../../redux/cart.slice';
 import Iconify from '../../../utils/Iconify';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -21,18 +22,32 @@ export default function ProductInformation({
 }) {
     const [value, setValue] = useState(1);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
   const {
     id,
     name,
     priceSell,
     quantity,
   } = product;
-  const currentProduct = cart.find((item) => item.id === id); 
   const handleIncreaseQuantity = () => {
-    dispatch(addToCart({...currentProduct, quantity: currentProduct.quantity + 1}));
+    dispatch(increaseQuantity(id));
   }
   const handleDecreaseQuantity = () => {
-    dispatch(addToCart({...currentProduct, quantity: currentProduct.quantity - 1}));
+    dispatch(decreaseQuantity(id));
+  }
+  const handleBuyNow = () => {
+    const itemInCart = cart.find((item) => item.id === id)
+    if(!itemInCart) {
+      dispatch(addToCart({
+        id,
+        name,
+        priceSell,
+        image: product.image[0],
+        available: quantity,
+        quantity: 1,
+      }))
+    }
+    navigate('/cart');
   }
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= quantity;
 
@@ -48,12 +63,12 @@ export default function ProductInformation({
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
-          <Typography variant="subtitle1" sx={{ mt: 0.5 }}>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ mt: 4 }}>
             Quantity
           </Typography>
 
-          <div>
+          <div className='mt-6'>
             <Incrementer
               name="quantity"
               quantity={value}
@@ -87,7 +102,7 @@ export default function ProductInformation({
             Add to Cart
           </Button>
 
-          <Button fullWidth size="large" type="submit" variant="contained">
+          <Button fullWidth size="large" type="submit" variant="contained" onClick={handleBuyNow}>
             Buy Now
           </Button>
         </Stack>

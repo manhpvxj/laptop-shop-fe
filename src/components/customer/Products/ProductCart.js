@@ -5,7 +5,7 @@ import { Badge } from '@mui/material';
 import Iconify from '../../../utils/Iconify';
 import { useSelector } from 'react-redux';
 import { cartSelector } from '../../../redux/cart.slice';
-
+import { Link } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(() => ({
@@ -31,12 +31,15 @@ const StyledRoot = styled('div')(() => ({
 // ----------------------------------------------------------------------
 
 export default function ProductCart() {
-    const cartAmount = useSelector(cartSelector)
+    const carts = useSelector(cartSelector);
+    const cartAmount = carts.map((cart) => cart.quantity).reduce((acc, curr) => acc + curr, 0);
   return (
     <StyledRoot>
-      <Badge showZero badgeContent={cartAmount.length} color="error" max={99}>
+      <Link to="/cart">
+      <Badge showZero badgeContent={cartAmount} color="error" max={99}>
         <Iconify icon="eva:shopping-cart-fill" width={24} height={24} />
       </Badge>
+      </Link>
     </StyledRoot>
   );
 }

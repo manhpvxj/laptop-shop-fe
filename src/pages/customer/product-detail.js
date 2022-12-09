@@ -7,7 +7,7 @@ import axiosClient from '../../api/axiosClient';
 import { productDetailSelector, setProductDetail } from '../../redux/product.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductInformation from '../../components/customer/ProductDetail/ProductInformation';
-import { cartSelector, addToCart } from '../../redux/cart.slice';
+import { cartSelector, addToCart, setTotalItems } from '../../redux/cart.slice';
 
 export const ProductDetailPage = () => {
     const [images, setImages] = useState([]);
@@ -25,7 +25,8 @@ export const ProductDetailPage = () => {
         setImages(imgs);
     }
     useEffect(() => {
-        getProductById();
+      getProductById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const handleAddToCart = () => {
         dispatch(
@@ -34,9 +35,11 @@ export const ProductDetailPage = () => {
             name: product.name,
             priceSell: product.priceSell,
             image: product.image[0],
+            available: product.quantity,
             quantity: 1,
           })
         );
+        dispatch(setTotalItems(cart))
       };
     return (
         <>

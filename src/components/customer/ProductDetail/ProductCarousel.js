@@ -38,8 +38,6 @@ export default function ProductDetailCarousel({ images }) {
 
   const settings1 = {
     speed: 320,
-    autoplay: true,
-    autoplaySpeed: 3000,
     dots: false,
     arrows: false,
     slidesToShow: 1,
@@ -51,8 +49,6 @@ export default function ProductDetailCarousel({ images }) {
 
   const settings2 = {
     speed: 320,
-    autoplay: true,
-    autoplaySpeed: 3000,
     dots: false,
     arrows: false,
     centerMode: true,

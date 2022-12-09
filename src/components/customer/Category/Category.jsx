@@ -27,7 +27,7 @@ export default function Category() {
           <Iconify icon="arcticons:animezone" width={40} />
           <Box className="ml-4">
             <Typography variant="h6" className="text-zinc-800">
-              Laptop shop
+              Laptop MT
             </Typography>
           </Box>
         </StyledAccount>
