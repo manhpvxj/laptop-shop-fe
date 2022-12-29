@@ -14,31 +14,30 @@ const navConfig = [
   },
   {
     title: 'Products',
-    path: '/admin',
     icon: <MdOutlineProductionQuantityLimits/>,
     children: [
       {
         title: 'List products',
-        path: 'products',
+        path: '/admin/products',
       },
       {
         title: 'Add product',
-        path: 'create',
+        path: '/admin/products/create',
       }
     ]
   },
   {
     title: 'Categories',
-    path: '/admin/categories',
+    path: '',
     icon: <MdCategory/>,
     children: [
       {
         title: 'List categories',
-        path: '',
+        path: '/admin/categories',
       },
       {
         title: 'Add category',
-        path: '',
+        path: '/admin/categories/create',
       }
     ]
   },

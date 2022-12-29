@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 // @mui
 import {
   Card,
@@ -16,38 +15,38 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-} from '@mui/material';
+} from "@mui/material";
 // components
-import Iconify from '../../../utils/Iconify';
-import ProductListHead from './TableHead';
-import axiosClient from '../../../api/axiosClient';
-import Scrollbar from '../../../utils/Scrollbar';
-import { Link } from 'react-router-dom';
+import Iconify from "../../../utils/Iconify";
+import ProductListHead from "./TableHead";
+import axiosClient from "../../../api/axiosClient";
+import Scrollbar from "../../../utils/Scrollbar";
+import { Link } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'productId', label: 'ID', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'priceSell', label: 'Price', alignRight: false },
-  { id: 'quantity', label: 'Quantity', alignRight: false },
-  { id: '' },
+  { id: "productId", label: "ID", alignRight: false },
+  { id: "name", label: "Name", alignRight: false },
+  { id: "priceSell", label: "Price", alignRight: false },
+  { id: "quantity", label: "Quantity", alignRight: false },
+  { id: "" },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function ProductPage() {
-
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState("asc");
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState("name");
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  
+  const [total, setTotal] = useState({});
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -57,8 +56,8 @@ export default function ProductPage() {
   };
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -72,33 +71,46 @@ export default function ProductPage() {
   };
 
   const [listProducts, setListProducts] = useState([]);
-  useEffect( () => {
-   const getProductsList = async () => {
-    const products = [];
-    const { data } = await axiosClient.get(`/customer/products?category=-1&search=&page=${page}&size=${rowsPerPage}`);
-    data.forEach((e) => {
-      products.push(e);
-    })
-    setListProducts(products);
-   }; 
-   getProductsList();
-    }, [page, rowsPerPage]);
+  useEffect(() => {
+    const getProductsList = async () => {
+      const products = [];
+      const { data, total } = await axiosClient.get(`/customer/products`, {
+        params: { 
+          search: '',
+          page: page + 1,
+          size: rowsPerPage,
+          category: -1,
+        },
+      });
+      data.forEach((e) => {
+        products.push(e);
+      });
+      setListProducts(products);
+      setTotal(total);
+    };
+    getProductsList();
+  }, [page, rowsPerPage]);
   return (
     <>
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={5}
+        >
           <Typography variant="h4" gutterBottom>
             Product
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            <Link to={'create'}>
-              New Product
-            </Link>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+          >
+            <Link to={"create"}>New Product</Link>
           </Button>
         </Stack>
 
         <Card>
-          <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <ProductListHead
@@ -108,15 +120,23 @@ export default function ProductPage() {
                   onRequestSort={handleRequestSort}
                 />
                 <TableBody>
-
                   {listProducts.map((row) => {
-                    const { id, name, priceSell, quantity} = row;
+                    const { id, name, priceSell, quantity } = row;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox">
-                        <TableCell align='left'>{id}</TableCell>
-                        <TableCell component="th" scope="row" padding="none" sx={{pl : 2}}>
-                          <Stack direction="row" alignItems="center" spacing={2}>
+                        <TableCell align="left">{id}</TableCell>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          padding="none"
+                          sx={{ pl: 2 }}
+                        >
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                          >
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
@@ -128,8 +148,12 @@ export default function ProductPage() {
                         <TableCell align="left">{quantity}</TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={handleOpenMenu}
+                          >
+                            <Iconify icon={"eva:more-vertical-fill"} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -138,11 +162,10 @@ export default function ProductPage() {
                 </TableBody>
               </Table>
             </TableContainer>
-            </Scrollbar>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={listProducts.length}
+            count={total.total || listProducts.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -155,27 +178,27 @@ export default function ProductPage() {
         open={Boolean(open)}
         anchorEl={open}
         onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
           sx: {
             p: 1,
             width: 140,
-            '& .MuiMenuItem-root': {
+            "& .MuiMenuItem-root": {
               px: 1,
-              typography: 'body2',
+              typography: "body2",
               borderRadius: 0.75,
             },
           },
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+        <MenuItem sx={{ color: "error.main" }}>
+          <Iconify icon={"eva:trash-2-outline"} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>

@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import {useNavigate} from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { setSearchBrand } from "../../../redux/search.slice";
+import { setPage, setSearchBrand } from "../../../redux/search.slice";
 
 // ----------------------------------------------------------------------
 
@@ -20,6 +20,7 @@ export default function CategoriesSection({ data = [] }) {
   const gotoBrand = (brand) => {
     navigate("/");
     dispatch(setSearchBrand(brand));
+    dispatch(setPage(1));
   }
 
   return (

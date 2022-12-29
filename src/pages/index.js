@@ -4,3 +4,4 @@ export { default as Page404 } from './404Page';
 export { default as ListProducts } from './admin/ListProduct';
 export { ProductDetailPage } from './customer/product-detail';
 export { default as CheckoutCart } from './customer/checkout';
+export { default as CreateProductPage } from './admin/CreateProduct';

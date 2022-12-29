@@ -7,7 +7,7 @@ import { bgBlur } from '../../../utils/bgBlur';
 // component
 import Iconify from '../../../utils/Iconify';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchTextSelector, setSearchText } from '../../../redux/search.slice';
+import { searchTextSelector, setPage, setSearchText } from '../../../redux/search.slice';
 
 // ----------------------------------------------------------------------
 
@@ -57,14 +57,20 @@ export default function Searchbar() {
               fullWidth
               disableUnderline
               value={searchText}
-              onChange={(e) => dispatch(setSearchText(e.target.value))}
+              onChange={(e) => {
+                dispatch(setSearchText(e.target.value));
+                setTimeout(dispatch(setPage(1)), 1000);
+              }}
               placeholder="Search…"
               startAdornment={
                 <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                  <Iconify
+                    icon="eva:search-fill"
+                    sx={{ color: "text.disabled", width: 20, height: 20 }}
+                  />
                 </InputAdornment>
               }
-              sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
+              sx={{ mr: 1, fontWeight: "fontWeightBold" }}
             />
           </StyledSearchbar>
         </Slide>

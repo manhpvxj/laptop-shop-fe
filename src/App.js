@@ -1,9 +1,7 @@
 import { Fragment } from 'react';
 
-import './App.css';
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import { publicRouter } from "./routes/router";
-import store from "./redux/store";
 
 function App() {
   return (

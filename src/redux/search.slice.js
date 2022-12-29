@@ -9,6 +9,7 @@ const productSlice = createSlice({
             label: 'Newest',
         },
         searchBrand: -1,
+        page: 1,
     },
     reducers: {
         setSearchText: (state, action) => {
@@ -19,14 +20,18 @@ const productSlice = createSlice({
         },
         setSearchBrand: (state, action) => {
             state.searchBrand = action.payload;
+        },
+        setPage: (state, action) => {
+            state.page = action.payload;
         }
     }
 })
 
-export const { setSearchText, setSearchStatus, setSearchBrand } = productSlice.actions;
+export const { setSearchText, setSearchStatus, setSearchBrand, setPage } = productSlice.actions;
 
 export const searchTextSelector = (state) => state.search.searchText;
 export const searchStatusSelector = (state) => state.search.searchStatus;
 export const searchBrandSelector = (state) => state.search.searchBrand;
+export const pageSelector = (state) => state.search.page;
 
 export default productSlice.reducer;

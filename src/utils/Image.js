@@ -15,6 +15,7 @@ export default function Image({
       <Box
         component="span"
         sx={{
+          borderRadius: 4,
           width: 1,
           lineHeight: 0,
           display: 'block',
@@ -47,6 +48,7 @@ export default function Image({
     <Box
       component="span"
       sx={{
+        borderRadius: 4,
         lineHeight: 1,
         display: 'block',
         overflow: 'hidden',
@@ -57,7 +59,6 @@ export default function Image({
       <Box
         component={LazyLoadImage}
         wrapperClassName="wrapper"
-        placeholderSrc="/assets/placeholder.svg"
         sx={{ width: 1, height: 1, objectFit: 'cover' }}
         {...other}
       />

@@ -1,17 +1,23 @@
-import { useState } from 'react';
+import { useState } from "react";
 // @mui
-import { Menu, Button, MenuItem, Typography, Stack } from '@mui/material';
+import { Menu, Button, MenuItem, Typography, Stack } from "@mui/material";
 // component
-import Iconify from '../../../utils/Iconify';
-import { useDispatch, useSelector } from 'react-redux';
-import { searchStatusSelector, setSearchBrand, setSearchStatus, setSearchText } from '../../../redux/search.slice';
+import Iconify from "../../../utils/Iconify";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  searchStatusSelector,
+  setPage,
+  setSearchBrand,
+  setSearchStatus,
+  setSearchText,
+} from "../../../redux/search.slice";
 
 // ----------------------------------------------------------------------
 
 const SORT_BY_OPTIONS = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' },
+  { value: "newest", label: "Newest" },
+  { value: "priceDesc", label: "Price: High-Low" },
+  { value: "priceAsc", label: "Price: Low-High" },
 ];
 
 export default function ShopProductSort() {
@@ -19,13 +25,16 @@ export default function ShopProductSort() {
   const status = useSelector(searchStatusSelector);
   const dispatch = useDispatch();
   const handleResetFilter = () => {
-    dispatch(setSearchStatus({
-      value: 'newest',
-      label: 'Newest',
-    }));
+    dispatch(
+      setSearchStatus({
+        value: "newest",
+        label: "Newest",
+      })
+    );
     dispatch(setSearchBrand(-1));
-    dispatch(setSearchText(''));
-  }
+    dispatch(setSearchText(""));
+    dispatch(setPage(1));
+  };
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -36,40 +45,56 @@ export default function ShopProductSort() {
 
   return (
     <>
-     <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-      <Button
-        color="inherit"
-        disableRipple
-        onClick={handleOpen}
-        endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
-      >
-        Sort By:&nbsp;
-        <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          {status.label}
-        </Typography>
-      </Button>
-      <Menu
-        keepMounted
-        anchorEl={open}
-        open={Boolean(open)}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        {SORT_BY_OPTIONS.map((option) => (
-          <MenuItem
-            key={option.value}
-            selected={option.value === status}
-            onClick={() => {
-                dispatch(setSearchStatus(option));
-                handleClose();}}
-            sx={{ typography: 'body2' }}
+      <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+        <Button
+          color="inherit"
+          disableRipple
+          onClick={handleOpen}
+          endIcon={
+            <Iconify
+              icon={open ? "eva:chevron-up-fill" : "eva:chevron-down-fill"}
+            />
+          }
+          sx={{ textTransform: "none" }}
+        >
+          Sort By:&nbsp;
+          <Typography
+            component="span"
+            variant="subtitle2"
+            sx={{ color: "text.secondary" }}
           >
-            {option.label}
-          </MenuItem>
-        ))}
-      </Menu>
-      <Button color='inherit' onClick={handleResetFilter}>Reset</Button>
+            {status.label}
+          </Typography>
+        </Button>
+        <Menu
+          keepMounted
+          anchorEl={open}
+          open={Boolean(open)}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          {SORT_BY_OPTIONS.map((option) => (
+            <MenuItem
+              key={option.value}
+              selected={option.value === status}
+              onClick={() => {
+                dispatch(setSearchStatus(option));
+                handleClose();
+              }}
+              sx={{ typography: "body2" }}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+        </Menu>
+        <Button
+          color="inherit"
+          onClick={handleResetFilter}
+          sx={{ textTransform: "none" }}
+        >
+          Reset
+        </Button>
       </Stack>
     </>
   );
