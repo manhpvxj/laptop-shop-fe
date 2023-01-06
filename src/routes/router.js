@@ -46,7 +46,7 @@ const publicRouter = [
         path: "/products/:id", component: ProductDetailPage, layout: CustomerLayout,
     },
     {
-        path: "/cart", component: CheckoutCart, layout: CustomerLayout,
+        path: "/cart", component: CheckoutCart,
     },
     {
         path: "/thankyou",

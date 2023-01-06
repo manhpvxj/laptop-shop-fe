@@ -20,7 +20,7 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ product }) {
   const dispatch = useDispatch();
-  const { id, name, priceSell, image = [], quantity } = product;
+  const { id, name, priceSell, cover, quantity } = product;
   const cart = useSelector(cartSelector);
   const handleAddToCart = () => {
     const currentProduct = cart.find((item) => item.id === id);
@@ -36,7 +36,7 @@ export default function ShopProductCard({ product }) {
         id,
         name,
         priceSell,
-        image: image[0],
+        cover,
         available: quantity,
         quantity: 1,
       })
@@ -55,7 +55,7 @@ export default function ShopProductCard({ product }) {
         }}
       >
         <Link to={`/products/${id}`}>
-          <Image alt={name} src={image[0]} ratio="1/1" />
+          <Image alt={name} src={cover} ratio="1/1" />
         </Link>
       </Box>
 

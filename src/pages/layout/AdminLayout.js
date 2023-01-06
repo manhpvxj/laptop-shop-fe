@@ -2,10 +2,12 @@ import { styled } from "@mui/material/styles";
 import { Nav } from "../../components/admin";
 import Login from "../admin/Login";
 import Header from "../../components/admin/Header";
+import { useSelector } from "react-redux";
 
 export default function AdminLayout({ children }) {
-  const isLoggedin = localStorage.getItem("accessToken");
-  if (!isLoggedin) {
+  const isLoggedin = useSelector(state => state.authLogin.isLoggedin);
+  const accessToken = localStorage.getItem('accessToken');
+  if (!isLoggedin && !accessToken) {
     return <Login />;
   }
   const StyledRoot = styled("div")({

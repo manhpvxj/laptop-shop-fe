@@ -1,83 +1,60 @@
-import * as Yup from 'yup';
-import { useSnackbar } from 'notistack';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from "notistack";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 // form
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 // @mui
-import { styled } from '@mui/material/styles';
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton } from "@mui/lab";
 import {
-  Card,
-  Chip,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-  Autocomplete,
-  InputAdornment,
-} from '@mui/material';
+  Card, InputAdornment, Stack, Typography, Button
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 // components
 import {
   FormProvider,
   RHFSelect,
   RHFTextField,
   RHFUploadMultiFile,
-} from '../../common/react-hook-form';
-
+  RHFUploadFile,
+} from "../../common/react-hook-form";
+import axiosClient from '../../../api/axiosClient';
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
-const CATEGORY_OPTION = [
-  { group: 'Clothing', classify: ['Shirts', 'T-shirts', 'Jeans', 'Leather'] },
-  { group: 'Tailored', classify: ['Suits', 'Blazers', 'Trousers', 'Waistcoats'] },
-  { group: 'Accessories', classify: ['Shoes', 'Backpacks and bags', 'Bracelets', 'Face masks'] },
-];
-
-const TAGS_OPTION = [
-  'Toy Story 3',
-  'Logan',
-  'Full Metal Jacket',
-  'Dangal',
-  'The Sting',
-  '2001: A Space Odyssey',
-  "Singin' in the Rain",
-  'Toy Story',
-  'Bicycle Thieves',
-  'The Kid',
-  'Inglourious Basterds',
-  'Snatch',
-  '3 Idiots',
-];
-
-const LabelStyle = styled(Typography)(({ theme }) => ({
-  ...theme.typography.subtitle2,
-  color: theme.palette.text.secondary,
-  marginBottom: theme.spacing(1),
+const LabelStyle = styled(Typography)(() => ({
+  fontWeight: 600,
+  lineHeight: 22 / 14,
+  fontSize: "1rem",
+  color: "#919EAB",
+  marginBottom: 8,
 }));
 
 // ----------------------------------------------------------------------
 
 export default function ProductNewEditForm({ isEdit, currentProduct }) {
   const navigate = useNavigate();
-//   const { enqueueSnackbar } = useSnackbar();
-
+  const [categories, setCategories] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
   const NewProductSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    description: Yup.string().required('Description is required'),
-    images: Yup.array().min(1, 'Images is required'),
-    price: Yup.number().moreThan(0, 'Price should not be 0'),
-    category: Yup.number().required('Category is required'),
-  });
+    name: Yup.string().required("Name is required"),
+    description: Yup.string().required("Description is required"),
+    images: Yup.array().min(1, "Images is required"),
+    priceSell: Yup.number().moreThan(0, "Price should not be 0"),
+    categoryId: Yup.number().required("Category is required"),
+    quantity: Yup.number().required("Quantity is required"),
+    });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentProduct?.name || '',
-      description: currentProduct?.description || '',
-      image: currentProduct?.image || [],
+      name: currentProduct?.name || "",
+      description: currentProduct?.description || "",
+      cover: currentProduct?.cover || "",
+      images: currentProduct?.image || [],
       quantity: currentProduct?.quantity || 0,
-      price: currentProduct?.price || 0,
-      category: currentProduct?.category || CATEGORY_OPTION[0].classify[1],
+      priceSell: currentProduct?.price || 0,
+      categoryId: currentProduct?.category || categories[0]?.id,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentProduct]
@@ -91,7 +68,6 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
   const {
     reset,
     watch,
-    control,
     setValue,
     getValues,
     handleSubmit,
@@ -99,6 +75,15 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
   } = methods;
 
   const values = watch();
+
+  const getCategories = async () => {
+    const { data } = await axiosClient.get('/customer/categories');
+    setCategories(data);
+}
+
+useEffect(() => {
+    getCategories();
+}, [])
 
   useEffect(() => {
     if (isEdit && currentProduct) {
@@ -110,22 +95,10 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentProduct]);
 
-  const onSubmit = async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-    //   enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      navigate('/admin/products/list');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleDrop = useCallback(
     (acceptedFiles) => {
-      const images = values.image || [];
-
-      setValue('image', [
+      const images = values.images || [];
+      setValue("images", [
         ...images,
         ...acceptedFiles.map((file) =>
           Object.assign(file, {
@@ -136,125 +109,129 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
     },
     [setValue, values.images]
   );
-
+  const handleDropCover = useCallback(
+    (acceptedFile) => {
+      const file = acceptedFile[0];
+      if(file) {
+        setValue("cover", 
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      )
+      }
+    },
+    [setValue, values.cover]
+  );
   const handleRemoveAll = () => {
-    setValue('images', []);
+    setValue("image", []);
+    setValue("cover", undefined);
   };
 
   const handleRemove = (file) => {
-    const filteredItems = values.image && values.image?.filter((_file) => _file !== file);
-
-    setValue('images', filteredItems);
+    const filteredItems =
+      values.images && values.images?.filter((_file) => _file !== file);
+    setValue("images", filteredItems);
   };
 
+  const handleUploadImages = async (cover,images) => {
+    const urls = [];
+    images.unshift(cover);
+    for( const element of images) {
+      const formData = new FormData();
+      formData.append('file', element);
+      formData.append('upload_preset', process.env.REACT_APP_UPLOAD_PRESET);
+      const { data } = await axios.create().post(process.env.REACT_APP_API_CLOUDINARY_URL, formData);
+      urls.push(data?.url);
+    }
+    return urls;
+  }
+
+  
+  const onSubmit = async (data) => {
+    try {
+      const urls = await handleUploadImages(data.cover, data.images);
+      const product = {
+        id: 1,
+        name: data.name,
+        description: data.description,
+        cover: urls[0],
+        images: urls,
+        quantity: data.quantity,
+        priceSell: data.priceSell,
+        categoryId: data.categoryId,
+      };
+      await axiosClient.post('/products/create', product);
+      reset();
+      enqueueSnackbar("Success!");
+      navigate("/admin/products");
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Stack spacing={3}>
-              <RHFTextField name="name" label="Product Name" />
+      <Card sx={{ p: 3 }}>
+        <Stack spacing={3}>
+          <RHFTextField name="name" label="Product Name" />
 
-                <RHFTextField name="description" label="Description"/>
-
-              <div>
-                <LabelStyle>Images</LabelStyle>
-                <RHFUploadMultiFile
-                  name="image"
-                  maxSize={3145728}
-                  onDrop={handleDrop}
-                  onRemove={handleRemove}
-                  onRemoveAll={handleRemoveAll}
-                  onUpload={() => console.log('ON UPLOAD')}
-                />
-              </div>
-            </Stack>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Stack spacing={3}>
-            <Card sx={{ p: 3 }}>
-              <Stack spacing={3} mt={2}>
-                <RHFTextField name="code" label="Product Code" />
-
-                <RHFTextField name="sku" label="Product SKU" />
-
-                <RHFSelect name="category" label="Category">
-                  {CATEGORY_OPTION.map((category) => (
-                    <optgroup key={category.group} label={category.group}>
-                      {category.classify.map((classify) => (
-                        <option key={classify} value={classify}>
-                          {classify}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </RHFSelect>
-
-                <Controller
-                  name="tags"
-                  control={control}
-                  render={({ field }) => (
-                    <Autocomplete
-                      {...field}
-                      multiple
-                      freeSolo
-                      onChange={(event, newValue) => field.onChange(newValue)}
-                      options={TAGS_OPTION.map((option) => option)}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <Chip
-                            {...getTagProps({ index })}
-                            key={option}
-                            size="small"
-                            label={option}
-                          />
-                        ))
-                      }
-                      renderInput={(params) => <TextField label="Tags" {...params} />}
-                    />
-                  )}
-                />
-              </Stack>
-            </Card>
-
-            <Card sx={{ p: 3 }}>
-              <Stack spacing={3} mb={2}>
-                <RHFTextField
-                  name="price"
-                  label="Regular Price"
-                  placeholder="0.00"
-                  value={getValues('price') === 0 ? '' : getValues('price')}
-                  onChange={(event) => setValue('price', Number(event.target.value))}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    type: 'number',
-                  }}
-                />
-
-                <RHFTextField
-                  name="priceSale"
-                  label="Sale Price"
-                  placeholder="0.00"
-                  value={getValues('priceSale') === 0 ? '' : getValues('priceSale')}
-                  onChange={(event) => setValue('price', Number(event.target.value))}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    type: 'number',
-                  }}
-                />
-              </Stack>
-            </Card>
-
-            <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-              {!isEdit ? 'Create Product' : 'Save Changes'}
-            </LoadingButton>
-          </Stack>
-        </Grid>
-      </Grid>
+          <RHFTextField name="description" label="Description" />
+          <RHFSelect name="categoryId" label="Category" InputLabelProps={{shrink: true}}>
+            {categories.map((category) => (
+              <option key={category.id} label={category.name} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </RHFSelect>
+          <RHFTextField
+            name="priceSell"
+            label="Sale Price"
+            placeholder="0.00"
+            value={getValues("priceSell") === 0 ? "" : getValues("priceSell")}
+            onChange={(event) => setValue("priceSell", Number(event.target.value))}
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">VND</InputAdornment>
+              ),
+              type: "number",
+            }}
+          />
+          <RHFTextField name="quantity" label="Quantity" />
+          <div>
+            <LabelStyle>Cover</LabelStyle>
+            <RHFUploadFile
+              name="cover"
+              maxSize={3145728}
+              onDrop={handleDropCover}
+              onUpload={() => console.log("ON UPLOAD")}
+            />
+          </div>
+          <div>
+            <LabelStyle>Images</LabelStyle>
+            <RHFUploadMultiFile
+              name="images"
+              maxSize={3145728}
+              onDrop={handleDrop}
+              onRemove={handleRemove}
+              onUpload={() => console.log("ON UPLOAD")}
+            />
+          </div>
+        </Stack>
+        <Stack alignItems={"flex-end"} spacing={2}>
+        <Button color="inherit" size="small" onClick={handleRemoveAll}>
+              Remove all images
+            </Button>
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            size="large"
+            loading={isSubmitting}
+            sx={{mt: 5}}
+          >
+            {!isEdit ? "Create Product" : "Save Changes"}
+          </LoadingButton>
+        </Stack>
+      </Card>
     </FormProvider>
   );
 }

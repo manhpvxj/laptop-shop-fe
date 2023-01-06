@@ -68,13 +68,13 @@ export default function CheckoutProductList({
 // ----------------------------------------------------------------------
 
 function CheckoutProductListRow({ row, onDelete, onDecrease, onIncrease }) {
-  const { name, priceSell, image, quantity, available } = row;
+  const { name, priceSell, cover, quantity, available } = row;
   return (
     <TableRow>
       <TableCell sx={{ display: "flex", alignItems: "center" }}>
         <Image
           alt="product image"
-          src={image}
+          src={cover}
           sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
         />
         <Typography variant="subtitle2" sx={{ maxWidth: 240 }}>

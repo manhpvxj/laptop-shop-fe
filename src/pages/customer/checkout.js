@@ -1,6 +1,11 @@
 import { Link as RouterLink } from "react-router-dom";
+import * as Yup from "yup";
+// form
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 // @mui
-import { Button, Card, CardHeader, Grid, Typography } from "@mui/material";
+import { Button, Card, CardHeader, Grid, Typography, CardContent, Stack, Box } from "@mui/material";
+import { styled } from '@mui/material/styles';
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,15 +16,16 @@ import {
   setTotalItems,
   setTotalPrice,
   totalItemsSelector,
-  totalPriceSelector,
+  totalPriceSelector
 } from "../../redux/cart.slice";
 // components
 import Iconify from "../../utils/Iconify";
-import Scrollbar from "../../utils/Scrollbar";
 //
 import { useEffect } from "react";
 import CheckoutProductListRow from "../../components/customer/Checkout/CheckoutListProducts";
 import CheckoutSummary from "../../components/customer/Checkout/CheckoutSummary";
+import Footer from '../../components/customer/Footer/Footer';
+import {FormProvider, RHFTextField } from '../../components/common/react-hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -43,9 +49,46 @@ export default function CheckoutCart() {
   const handleDecreaseQuantity = (productId) => {
     dispatch(decreaseQuantity(productId));
   };
+  const Main = styled('div')(() => ({
+    overflow: 'auto',
+    minHeight: '100%',
+    padding: '120px 30px 16px 30px',
+  }));
+
+  const onSubmit = async () => {
+
+  }
+  const BillingSchema = Yup.object().shape({
+    fullName: Yup.string().required("Name is required"),
+    phoneNumber: Yup.string().min(8, "Phone Number is invalid"),
+    address: Yup.string().required("Address is required"),
+  });
+  const defaultValues = {
+    createAt: new Date(),
+    totalPrice: total,
+    fullName: '',
+    phoneNumber: '',
+    address: '',
+    product: [],
+  }
+  const methods = useForm({
+    resolver: yupResolver(BillingSchema),
+    defaultValues,
+  });
+
+  const {
+    reset,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
 
   return (
-    <Grid container spacing={3}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <Main>
+    <Grid container spacing={2}>
       <Grid item xs={12} md={8}>
         <Card sx={{ mb: 3 }}>
           <CardHeader
@@ -59,15 +102,12 @@ export default function CheckoutCart() {
             }
             sx={{ mb: 3 }}
           />
-
-          <Scrollbar>
             <CheckoutProductListRow
               products={cart}
               onDelete={handleDeleteCart}
               onIncreaseQuantity={handleIncreaseQuantity}
               onDecreaseQuantity={handleDecreaseQuantity}
             />
-          </Scrollbar>
         </Card>
 
         <Button
@@ -81,17 +121,43 @@ export default function CheckoutCart() {
       </Grid>
 
       <Grid item xs={12} md={4}>
-        <CheckoutSummary total={total} />
+        <CheckoutSummary total={total} /> 
+        <Card>
+          <CardHeader title="Address"/>
+          <CardContent>
+            <Stack spacing={3}>
+          <Box
+              sx={{
+                display: 'grid',
+                rowGap: 3,
+                columnGap: 2,
+                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              }}
+            >
+              <RHFTextField name="fullName" label="Full Name" />
+              <RHFTextField name="phone" label="Phone Number" />
+            </Box>
+
+            <RHFTextField name="address" label="Address" />
+            </Stack>
+          </CardContent>
+        </Card>
         <Button
           fullWidth
           size="large"
           type="submit"
           variant="contained"
           disabled={cart.length === 0}
+          sx={{
+            mt: 3,
+          }}
         >
           Check Out
         </Button>
       </Grid>
     </Grid>
+    <Footer/>
+    </Main>
+    </FormProvider>
   );
 }

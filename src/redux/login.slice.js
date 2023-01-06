@@ -4,6 +4,7 @@ const loginState = {
     username: '',
     password: '',
     showPassword: false,
+    rememberMe: false,
 }
 export const loginSlice = createSlice({
     name: 'login',
@@ -17,10 +18,13 @@ export const loginSlice = createSlice({
         },
         setShowPassword: (state, action) => {
             state.showPassword = action.payload;
+        },
+        setRememberMe: (state, action) => {
+            state.rememberMe = action.payload;
         }
     }
 })
-export const { setUsername, setPassword, setShowPassword } = loginSlice.actions;
+export const { setUsername, setPassword, setShowPassword, setRememberMe } = loginSlice.actions;
 
 export const usernameSelector = (state) => state.login.username;
 

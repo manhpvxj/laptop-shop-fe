@@ -6,13 +6,13 @@ import {
   Checkbox,
   IconButton,
   InputAdornment,
-  Link,
+  FormControlLabel,
   Stack,
   TextField,
 } from "@mui/material";
 // components
 import axiosClient from "../../../api/axiosClient";
-import { setAccessToken } from "../../../redux/auth.slice";
+import { setAccessToken, setLoggedIn } from "../../../redux/auth.slice";
 import {
   passwordSelector,
   setPassword,
@@ -20,6 +20,7 @@ import {
   setUsername,
   showPasswordSelector,
   usernameSelector,
+  setRememberMe,
 } from "../../../redux/login.slice";
 import Iconify from "../../../utils/Iconify";
 // ----------------------------------------------------------------------
@@ -31,15 +32,22 @@ export default function LoginForm() {
   const loginData = {
     username: useSelector(usernameSelector),
     password: useSelector(passwordSelector),
+    rememberMe: useSelector(state => state.login.rememberMe),
   };
 
   const handleSubmit = async () => {
     if (!loginData) return;
     try {
-      const res = await axiosClient.post("/auth/login", loginData);
+      const res = await axiosClient.post("/auth/login", {
+        username: loginData.username,
+        password: loginData.password,
+      });
+      if(loginData.rememberMe) {
+        dispatch(setAccessToken(res.token));
+        localStorage.setItem("accessToken", res.token);
+      }
       dispatch(setPassword(""));
-      dispatch(setAccessToken(res.token));
-      localStorage.setItem("accessToken", res.token);
+      dispatch(setLoggedIn(true));
       localStorage.setItem("username", res.username);
       navigate("/admin", { replace: true });
     } catch (e) {
@@ -87,10 +95,11 @@ export default function LoginForm() {
         justifyContent="space-between"
         sx={{ my: 2 }}
       >
-        <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover" className="cursor-pointer">
-          Forgot password?
-        </Link>
+        <FormControlLabel 
+          control={<Checkbox
+                       checked={loginData.rememberMe}
+                       onChange={(e) => dispatch(setRememberMe(e.target.checked))}/> 
+           } label="Remember me"/>
       </Stack>
 
       <LoadingButton

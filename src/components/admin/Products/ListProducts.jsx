@@ -20,12 +20,13 @@ import {
 import Iconify from "../../../utils/Iconify";
 import ProductListHead from "./TableHead";
 import axiosClient from "../../../api/axiosClient";
-import Scrollbar from "../../../utils/Scrollbar";
+import Image from "../../../utils/Image";
 import { Link } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: "productId", label: "ID", alignRight: false },
+  { id: "cover", label: "Cover", alignRight: false },
   { id: "name", label: "Name", alignRight: false },
   { id: "priceSell", label: "Price", alignRight: false },
   { id: "quantity", label: "Quantity", alignRight: false },
@@ -39,10 +40,6 @@ export default function ProductPage() {
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState("asc");
-
-  const [orderBy, setOrderBy] = useState("name");
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [total, setTotal] = useState({});
@@ -53,12 +50,6 @@ export default function ProductPage() {
 
   const handleCloseMenu = () => {
     setOpen(null);
-  };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -73,20 +64,16 @@ export default function ProductPage() {
   const [listProducts, setListProducts] = useState([]);
   useEffect(() => {
     const getProductsList = async () => {
-      const products = [];
-      const { data, total } = await axiosClient.get(`/customer/products`, {
-        params: { 
-          search: '',
+      const { data } = await axiosClient.get(`/customer/products`, {
+        params: {
+          search: "",
           page: page + 1,
           size: rowsPerPage,
           category: -1,
         },
       });
-      data.forEach((e) => {
-        products.push(e);
-      });
-      setListProducts(products);
-      setTotal(total);
+      setListProducts(data.data);
+      setTotal(data.total);
     };
     getProductsList();
   }, [page, rowsPerPage]);
@@ -111,61 +98,64 @@ export default function ProductPage() {
         </Stack>
 
         <Card>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <ProductListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  onRequestSort={handleRequestSort}
-                />
-                <TableBody>
-                  {listProducts.map((row) => {
-                    const { id, name, priceSell, quantity } = row;
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table>
+              <ProductListHead headLabel={TABLE_HEAD} />
+              <TableBody>
+                {listProducts.map((row) => {
+                  const { id, name, priceSell, quantity, cover } = row;
 
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox">
-                        <TableCell align="left">{id}</TableCell>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          padding="none"
-                          sx={{ pl: 2 }}
+                  return (
+                    <TableRow hover key={id} tabIndex={-1} role="checkbox">
+                      <TableCell align="left">{id}</TableCell>
+                      <TableCell align="left">
+                        <Image
+                          alt="product image"
+                          src={cover}
+                          sx={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: 1.5,
+                            mr: 2,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        padding="none"
+                        sx={{ pl: 2 }}
+                      >
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                          <Typography variant="subtitle2" noWrap>
+                            {name}
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+
+                      <TableCell align="left">{priceSell}</TableCell>
+
+                      <TableCell align="left">{quantity}</TableCell>
+
+                      <TableCell align="right">
+                        <IconButton
+                          size="large"
+                          color="inherit"
+                          onClick={handleOpenMenu}
                         >
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            spacing={2}
-                          >
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="left">{priceSell}</TableCell>
-
-                        <TableCell align="left">{quantity}</TableCell>
-
-                        <TableCell align="right">
-                          <IconButton
-                            size="large"
-                            color="inherit"
-                            onClick={handleOpenMenu}
-                          >
-                            <Iconify icon={"eva:more-vertical-fill"} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                          <Iconify icon={"eva:more-vertical-fill"} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={total.total || listProducts.length}
+            count={total?.total || listProducts.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

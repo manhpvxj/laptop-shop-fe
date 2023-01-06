@@ -16,13 +16,9 @@ export const ProductDetailPage = () => {
     const {product} = useSelector(productDetailSelector);
     const cart = useSelector(cartSelector);
     const getProductById = async () => {
-        const imgs = [];
         const {data} = await axiosClient.get(`/customer/products/${id}`);
         dispatch(setProductDetail(data));
-        data.image.forEach(e => {
-            imgs.push(e)
-        });
-        setImages(imgs);
+        setImages(data.images);
     }
     useEffect(() => {
       getProductById();
@@ -34,7 +30,7 @@ export const ProductDetailPage = () => {
             id: product.id,
             name: product.name,
             priceSell: product.priceSell,
-            image: product.image[0],
+            cover: product.cover,
             available: product.quantity,
             quantity: 1,
           })

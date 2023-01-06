@@ -30,28 +30,12 @@ export default function ProductInformation({ cart, product, onAddCart }) {
   const [value, setValue] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id, name, priceSell, quantity } = product;
+  const { id, name, priceSell, quantity, cover } = product;
   const handleIncreaseQuantity = () => {
     dispatch(increaseQuantity(id));
   };
   const handleDecreaseQuantity = () => {
     dispatch(decreaseQuantity(id));
-  };
-  const handleBuyNow = () => {
-    const itemInCart = cart.find((item) => item.id === id);
-    if (!itemInCart) {
-      dispatch(
-        addToCart({
-          id,
-          name,
-          priceSell,
-          image: product.image[0],
-          available: quantity,
-          quantity: 1,
-        })
-      );
-    }
-    navigate("/cart");
   };
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >=
@@ -112,17 +96,6 @@ export default function ProductInformation({ cart, product, onAddCart }) {
           sx={{ whiteSpace: "nowrap", textTransform: "none" }}
         >
           Add to Cart
-        </Button>
-
-        <Button
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          onClick={handleBuyNow}
-          sx={{ textTransform: "none" }}
-        >
-          Buy Now
         </Button>
       </Stack>
     </RootStyle>

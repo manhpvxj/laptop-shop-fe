@@ -27,7 +27,6 @@ export default function ProductsPage() {
   const brand = useSelector(searchBrandSelector);
   const dispatch = useDispatch();
   const getProductsList = async () => {
-    const products = [];
     const { data } = await axiosClient.get(`/customer/products`, {
       params: {
         category: brand,
@@ -35,10 +34,8 @@ export default function ProductsPage() {
         page,
       },
     });
-    data.forEach((e) => {
-      products.push(e);
-    });
-    setListProducts(products);
+
+    setListProducts(data.data);
   };
   useEffect(() => {
     setLoading(true);
@@ -66,7 +63,7 @@ export default function ProductsPage() {
         <ProductCart />
         {isLoading ? <Loading /> : <ProductList products={listProducts} />}
         {
-          listProducts.length > 4 && <Stack
+          listProducts.length > 0 && <Stack
           direction="row"
           flexWrap="wrap-reverse"
           alignItems="center"

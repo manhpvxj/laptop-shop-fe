@@ -78,7 +78,7 @@ return (
                 {/* <a href="https://www.facebook.com/trang110501" className="mr-2.5">
                 Minh Tráng
                 </a> */}
-                <Link href="https://www.facebook.com/trang110501" color="inherit" underline="none" marginRight="7px" >
+                <Link href="https://www.facebook.com/trang110501" target="_blank" color="inherit" underline="none" marginRight="7px" >
                 Minh Tráng
                 </Link>
                 <FacebookIcon fontSize="small" color="info"/> 

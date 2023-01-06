@@ -12,7 +12,7 @@ function App() {
             const Layout = router.layout || Fragment;
             return (
               <Route
-                key={index}
+                key={router.index}
                 path={router.path}
                 element={
                   <Layout>

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 // @mui
-import { Box, Divider, Typography, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { usernameSelector } from '../../../redux/login.slice';
-import { setAccessToken } from '../../../redux/auth.slice';
+import { Avatar, Box, Divider, IconButton, MenuItem, Popover, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { setAccessToken } from '../../../redux/auth.slice';
 // ----------------------------------------------------------------------
 
 
@@ -26,7 +25,7 @@ export default function AccountPopover() {
     dispatch(setAccessToken(''));
     navigate('/admin/login');
   }
-  const account = useSelector(usernameSelector);
+  const account = localStorage.getItem('username');
   return (
     <>
       <IconButton

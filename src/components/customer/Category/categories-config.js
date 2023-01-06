@@ -6,12 +6,8 @@ import Iconify from "../../../utils/Iconify";
 export const CategoryConfig = () => {
     const [listCategories, setListCategories] = useState([]);
     const getCategories = async () => {
-        const categories = [];
         const { data } = await axiosClient.get('/customer/categories');
-        data.forEach((e) => {
-            categories.push(e);
-        })
-        setListCategories(categories);
+        setListCategories(data);
     }
 
     useEffect(() => {

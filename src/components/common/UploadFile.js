@@ -3,8 +3,7 @@ import { styled, alpha } from "@mui/material/styles";
 import { Box, Stack, Button, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 // type
-import MultiFilePreview from "./PreviewFiles";
-
+import Image from "../../utils/Image";
 // ----------------------------------------------------------------------
 const DropZoneStyle = styled("div")(() => ({
   outline: "none",
@@ -15,13 +14,7 @@ const DropZoneStyle = styled("div")(() => ({
   "&:hover": { opacity: 0.72, cursor: "pointer" },
 }));
 
-export default function UploadFiles({
-  files,
-  onDrop,
-  onRemove,
-  helperText,
-  sx,
-}) {
+export default function UploadFiles({ file, onDrop, onUpload, onRemove, sx }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <Box sx={{ width: "100%", ...sx }}>
@@ -51,8 +44,26 @@ export default function UploadFiles({
         </Box>
       </DropZoneStyle>
 
-      <MultiFilePreview files={files} onRemove={onRemove} />
-      {helperText}
+      {file && (
+        <>
+          <Image
+            alt="file preview"
+            src={typeof file === "string" ? file : file.preview}
+            ratio="1/1"
+            sx={{
+              p: 0,
+              m: 0.5,
+              width: 100,
+              height: 100,
+              borderRadius: 1.25,
+              overflow: "hidden",
+              position: "relative",
+              display: "inline-flex",
+              border: `solid 1px`,
+            }}
+          />
+        </>
+      )}
     </Box>
   );
 }
