@@ -48,10 +48,11 @@ export default function ShopProductCard({ product }) {
       <Box
         sx={{
           position: "relative",
-          transition: "transform .2s",
+          transition: "transform .5s",
           "&:hover": {
             transform: "scale(1.2)",
           },
+          maxHeight: 300,
         }}
       >
         <Link to={`/products/${id}`}>
@@ -61,7 +62,12 @@ export default function ShopProductCard({ product }) {
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link to={`/products/${id}`}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              fontWeight: 600,
+              height: '50px'
+            }}>
             {name}
           </Typography>
         </Link>

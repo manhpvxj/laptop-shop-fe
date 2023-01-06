@@ -32,7 +32,7 @@ export default function LoginForm() {
   const loginData = {
     username: useSelector(usernameSelector),
     password: useSelector(passwordSelector),
-    rememberMe: useSelector(state => state.login.rememberMe),
+    rememberMe: useSelector((state) => state.login.rememberMe),
   };
 
   const handleSubmit = async () => {
@@ -42,7 +42,7 @@ export default function LoginForm() {
         username: loginData.username,
         password: loginData.password,
       });
-      if(loginData.rememberMe) {
+      if (loginData.rememberMe) {
         dispatch(setAccessToken(res.token));
         localStorage.setItem("accessToken", res.token);
       }
@@ -95,11 +95,15 @@ export default function LoginForm() {
         justifyContent="space-between"
         sx={{ my: 2 }}
       >
-        <FormControlLabel 
-          control={<Checkbox
-                       checked={loginData.rememberMe}
-                       onChange={(e) => dispatch(setRememberMe(e.target.checked))}/> 
-           } label="Remember me"/>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={loginData.rememberMe}
+              onChange={(e) => dispatch(setRememberMe(e.target.checked))}
+            />
+          }
+          label="Remember me"
+        />
       </Stack>
 
       <LoadingButton

@@ -5,6 +5,11 @@ const initialState = {
     cart: [],
     totalPrice: 0,
     totalItems: 0,
+    information: {
+        fullName: '',
+        phoneNumber: '',
+        address: '',
+    }
 }
 export const cartSlice = createSlice({
     name:'cart',
@@ -57,6 +62,15 @@ export const cartSlice = createSlice({
         setTotalItems: (state, action) => {
             const carts = action.payload;
             state.totalItems = sum(carts.map((item) => item.quantity));
+        },
+        setFullName: (state, action) => {
+            state.information.fullName = action.payload;
+        },
+        setPhoneNumber: (state, action) => {
+            state.information.phoneNumber = action.payload;
+        },
+        setAddress: (state, action) => {
+            state.information.address = action.payload;
         }
     }
 })
@@ -69,6 +83,9 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   setTotalItems,
+  setFullName,
+  setPhoneNumber,
+  setAddress,
 } = cartSlice.actions;
 
 export const cartSelector = (state) => state.cart.cart;

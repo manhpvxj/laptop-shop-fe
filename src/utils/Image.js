@@ -6,7 +6,6 @@ import { Box } from '@mui/material';
 
 export default function Image({
   ratio,
-  disabledEffect = false,
   sx,
   ...other
 }) {

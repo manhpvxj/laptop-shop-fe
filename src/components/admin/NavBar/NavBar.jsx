@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 // @mui
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import { Box, Drawer, Typography, Avatar } from '@mui/material';
 
 // components
@@ -12,8 +12,10 @@ import navConfig from './navbar-config';
 const StyledAccount = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
-  padding: '2px',
-  marginLeft: '16px',
+  padding: '16px 24px',
+  borderRadius: 6,
+  backgroundColor: alpha('#919EAB', 0.12),
+  
 }));
 
 // ----------------------------------------------------------------------
@@ -28,7 +30,7 @@ export default function Nav() {
     <Box className='mb-5 mx-3'>
       <Box className='mt-10 mb-10'>
           <StyledAccount>
-            <Avatar src={""} alt="photoURL" />
+            <Avatar src={"/assets/mirai.jpg"} alt="photoURL" />
             <Box className='ml-4'>
               <Typography variant="subtitle2" className="text-zinc-800">
                 {localStorage.getItem('username')}

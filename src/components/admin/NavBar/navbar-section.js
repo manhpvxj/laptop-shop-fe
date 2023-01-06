@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { NavLink as RouterLink, useLocation } from "react-router-dom";
+import { NavLink as RouterLink, useLocation, useNavigate } from "react-router-dom";
 // @mui
 import {
   Box,
@@ -46,6 +46,7 @@ export default function NavSection({ data = [] }) {
       [key]: !open[key],
     });
   };
+  const navigate = useNavigate();
   return (
     <List
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
@@ -56,7 +57,8 @@ export default function NavSection({ data = [] }) {
         const isHasChildren = children.length !== 0;
         return (
           <Box key={item.title}>
-            <ListItemButton onClick={() => handleOpen(item.title)}>
+            <ListItemButton onClick={() => {
+               isHasChildren ? handleOpen(item.title) : navigate(item.path)}}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.title} />
       {isHasChildren ? ( 
@@ -72,6 +74,7 @@ export default function NavSection({ data = [] }) {
                 {children.map((child) => {
                   return (
                     <ListItemButton
+                    key={child}
                       sx={{ pl: 4 }}
                       component={RouterLink}
                       to={child.path}

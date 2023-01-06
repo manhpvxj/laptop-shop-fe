@@ -45,7 +45,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={""} alt="photoURL" />
+        <Avatar src={"/assets/mirai.jpg"} alt="photoURL" />
       </IconButton>
 
       <Popover

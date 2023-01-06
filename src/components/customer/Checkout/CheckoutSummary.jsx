@@ -15,7 +15,6 @@ import {
 
   export default function CheckoutSummary({
     total,
-    onSubmit,
   }) {
     return (
       <Card sx={{ mb: 3 }}>

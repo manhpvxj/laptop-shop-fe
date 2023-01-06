@@ -55,7 +55,7 @@ export default function ProductDetailCarousel({ images }) {
     focusOnSelect: true,
     variableWidth: true,
     centerPadding: '0px',
-    slidesToShow: images.length > 3 ? 3 : images.length,
+    slidesToShow: images.length,
   };
 
   useEffect(() => {
@@ -102,11 +102,7 @@ export default function ProductDetailCarousel({ images }) {
           my: 3,
           mx: 'auto',
           '& .slick-current .isActive': { opacity: 1 },
-          ...(images.length === 1 && { maxWidth: THUMB_SIZE * 1 + 16 }),
-          ...(images.length === 2 && { maxWidth: THUMB_SIZE * 2 + 32 }),
-          ...(images.length === 3 && { maxWidth: THUMB_SIZE * 3 + 48 }),
-          ...(images.length === 4 && { maxWidth: THUMB_SIZE * 3 + 48 }),
-          ...(images.length >= 5 && { maxWidth: THUMB_SIZE * 6 }),
+          maxWidth: (THUMB_SIZE + 16) * images.length,
           ...(images.length > 2 && {
             position: 'relative',
             '&:before, &:after': {
@@ -126,7 +122,6 @@ export default function ProductDetailCarousel({ images }) {
           {images.map((img, index) => (
             <Box key={img} sx={{ px: 0.75 }}>
               <Image
-                disabledEffect
                 alt="thumb image"
                 src={img}
                 sx={{

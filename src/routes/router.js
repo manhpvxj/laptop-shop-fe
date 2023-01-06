@@ -8,6 +8,7 @@ import {
   ProductDetailPage,
   CheckoutCart,
   CreateProductPage,
+  InvoicesPage,
 } from "../pages/index";
 
  
@@ -34,7 +35,7 @@ const publicRouter = [
         path:"/admin/categories/:id", layout: AdminLayout,
     },
     {
-        path: "/admin/invoices", layout: AdminLayout,
+        path: "/admin/invoices", component: InvoicesPage, layout: AdminLayout,
     },
     {
         path: "/admin/invoices/:id", layout: AdminLayout,
@@ -47,9 +48,6 @@ const publicRouter = [
     },
     {
         path: "/cart", component: CheckoutCart,
-    },
-    {
-        path: "/thankyou",
     },
     {
         path: "/", component: HomePage, layout: CustomerLayout,
