@@ -27,7 +27,6 @@ import Iconify from "../../utils/Iconify";
 //
 import { LoadingButton } from "@mui/lab";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import CheckoutProductListRow from "../../components/customer/Checkout/CheckoutListProducts";
 import CheckoutSummary from "../../components/customer/Checkout/CheckoutSummary";
@@ -42,7 +41,6 @@ export default function CheckoutCart() {
   const total = useSelector(totalPriceSelector);
   const totalItems = useSelector(totalItemsSelector);
   const information = useSelector((state) => state.cart.information);
-  const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
   useEffect(() => {
@@ -74,7 +72,7 @@ export default function CheckoutCart() {
       };
     });
     const data = {
-      createdAt: new Date().toUTCString(),
+      createdAt: new Date().toString(),
       totalPrice: total,
       fullName: information.fullName,
       phoneNumber: information.phoneNumber,

@@ -1,6 +1,6 @@
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 // form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,6 +21,7 @@ import {
 } from "../../common/react-hook-form";
 import axiosClient from '../../../api/axiosClient';
 import axios from 'axios';
+import { useSelector } from "react-redux";
 // ----------------------------------------------------------------------
 
 const LabelStyle = styled(Typography)(() => ({
@@ -33,10 +34,11 @@ const LabelStyle = styled(Typography)(() => ({
 
 // ----------------------------------------------------------------------
 
-export default function ProductNewEditForm({ isEdit, currentProduct }) {
+export default function ProductEditForm() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const { id } = useParams();
+  const currentProduct = useSelector((state) => state.product.product.product);
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     description: Yup.string().required("Description is required"),
@@ -45,16 +47,17 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
     categoryId: Yup.number().required("Category is required"),
     quantity: Yup.number().required("Quantity is required"),
     });
-
+  
+    console.log(currentProduct);
   const defaultValues = useMemo(
     () => ({
-      name: "",
-      description: "",
-      cover: "",
-      images: [],
-      quantity: 0,
-      priceSell: 0,
-      categoryId: 0,
+      name: currentProduct?.name,
+      description: currentProduct?.description,
+      cover: currentProduct?.cover,
+      images: currentProduct?.images,
+      quantity: currentProduct?.quantity,
+      priceSell: currentProduct?.priceSell,
+      categoryId: currentProduct?.category?.id,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentProduct]
@@ -76,24 +79,14 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
 
   const values = watch();
 
-  const getCategories = async () => {
-    const { data } = await axiosClient.get('/customer/categories');
-    setCategories(data);
-}
-
-useEffect(() => {
-    getCategories();
-}, [])
 
   useEffect(() => {
-    if (isEdit && currentProduct) {
+    if (currentProduct) {
       reset(defaultValues);
     }
-    if (!isEdit) {
-      reset(defaultValues);
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, currentProduct]);
+  }, [currentProduct]);
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -151,7 +144,7 @@ useEffect(() => {
     try {
       const urls = await handleUploadImages(data.cover, data.images);
       const product = {
-        id: 1,
+        id,
         name: data.name,
         description: data.description,
         cover: urls[0],
@@ -160,7 +153,7 @@ useEffect(() => {
         priceSell: data.priceSell,
         categoryId: data.categoryId,
       };
-      await axiosClient.post('/products/create', product);
+      await axiosClient.post(`/products/${id}/edit`, product);
       reset();
       enqueueSnackbar("Success!");
       navigate("/admin/products");
@@ -172,16 +165,11 @@ useEffect(() => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField name="name" label="Product Name" />
+          <RHFTextField name="name" label="Product Name" disabled/>
 
           <RHFTextField name="description" label="Description" />
-          <RHFSelect name="categoryId" label="Category" InputLabelProps={{shrink: true}}>
-            {categories.map((category) => (
-              <option key={category.id} label={category.name} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </RHFSelect>
+          <RHFTextField name="categoryId" label="Category" value={values.categoryId.name} disabled/>
+
           <RHFTextField
             name="priceSell"
             label="Sale Price"
@@ -228,7 +216,7 @@ useEffect(() => {
             loading={isSubmitting}
             sx={{mt: 5}}
           >
-            {!isEdit ? "Create Product" : "Save Changes"}
+            Save Changes
           </LoadingButton>
         </Stack>
       </Card>

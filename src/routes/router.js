@@ -9,6 +9,7 @@ import {
   CheckoutCart,
   CreateProductPage,
   InvoicesPage,
+  EditProductPage,
 } from "../pages/index";
 
  
@@ -26,7 +27,7 @@ const publicRouter = [
         path: "admin/products/create", component: CreateProductPage, layout: AdminLayout,
     },
     {
-        path: "/admin/products/:id", layout: AdminLayout,
+        path: "/admin/products/:id", component: EditProductPage, layout: AdminLayout,
     },
     {
         path: "/admin/categories", layout: AdminLayout,

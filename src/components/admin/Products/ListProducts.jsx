@@ -5,14 +5,12 @@ import {
   Table,
   Stack,
   Button,
-  Popover,
   TableRow,
   MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from "@mui/material";
@@ -21,7 +19,10 @@ import Iconify from "../../../utils/Iconify";
 import ProductListHead from "./TableHead";
 import axiosClient from "../../../api/axiosClient";
 import Image from "../../../utils/Image";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import TableMoreMenu from "../../common/TableMoreMenu";
+import { useDispatch } from "react-redux";
+import { setProductDetail } from '../../../redux/product.slice';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -44,6 +45,10 @@ export default function ProductPage() {
 
   const [total, setTotal] = useState({});
 
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -61,6 +66,7 @@ export default function ProductPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
+
   const [listProducts, setListProducts] = useState([]);
   useEffect(() => {
     const getProductsList = async () => {
@@ -77,6 +83,13 @@ export default function ProductPage() {
     };
     getProductsList();
   }, [page, rowsPerPage]);
+
+  
+  const handleEditRow = (id) => {
+    const currProduct = listProducts.find((product) => product.id === id);
+    dispatch(setProductDetail(currProduct));
+    navigate(`/admin/products/${id}`);
+  }
   return (
     <>
       <Container>
@@ -138,13 +151,34 @@ export default function ProductPage() {
                       <TableCell align="left">{quantity}</TableCell>
 
                       <TableCell align="right">
-                        <IconButton
-                          size="large"
-                          color="inherit"
-                          onClick={handleOpenMenu}
-                        >
-                          <Iconify icon={"eva:more-vertical-fill"} />
-                        </IconButton>
+                        <TableMoreMenu
+                          open={open}
+                          onOpen={handleOpenMenu}
+                          onClose={handleCloseMenu}
+                          actions={
+                            <>
+                              <MenuItem
+                                onClick={() => {
+                                  handleEditRow(id);
+                                  handleCloseMenu();
+                                }}>
+                                <Iconify
+                                  icon={"eva:edit-fill"}
+                                  sx={{ mr: 2 }}
+                                />
+                                Edit
+                              </MenuItem>
+
+                              <MenuItem sx={{ color: "error.main" }}>
+                                <Iconify
+                                  icon={"eva:trash-2-outline"}
+                                  sx={{ mr: 2 }}
+                                />
+                                Delete
+                              </MenuItem>
+                            </>
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -163,35 +197,6 @@ export default function ProductPage() {
           />
         </Card>
       </Container>
-
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: "top", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            "& .MuiMenuItem-root": {
-              px: 1,
-              typography: "body2",
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: "error.main" }}>
-          <Iconify icon={"eva:trash-2-outline"} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
     </>
   );
 }

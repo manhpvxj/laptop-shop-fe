@@ -1,26 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 // @mui
 import {
-  Card,
-  Table,
-  Stack,
-  Button,
-  Popover,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
-  Container,
-  Typography,
-  IconButton,
-  TableContainer,
-  TablePagination,
+  Card, Chip, Container, IconButton, MenuItem, Popover, Stack, Table, TableBody,
+  TableCell, TableContainer,
+  TablePagination, TableRow, Typography
 } from "@mui/material";
 // components
+import axiosClient from "../../../api/axiosClient";
+import { formatDate } from '../../../utils/formatDate';
+import { fCurrency } from "../../../utils/formatCurrency";
 import Iconify from "../../../utils/Iconify";
 import InvoicesListHead from "./TableHead";
-import axiosClient from "../../../api/axiosClient";
-import { Link } from "react-router-dom";
+import TableMoreMenu from '../../common/TableMoreMenu';
+import { useNavigate } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -42,6 +34,8 @@ export default function ListInvoices() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [total, setTotal] = useState({});
+
+  const navigate = useNavigate();
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -74,6 +68,10 @@ export default function ListInvoices() {
     };
     getProductsList();
   }, [page, rowsPerPage]);
+
+  const handleEditRow = (id) => {
+    navigate(`/admin/invoices/${id}`)
+  }
   return (
     <>
       <Container>
@@ -84,14 +82,8 @@ export default function ListInvoices() {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            Product
+            Invoice
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:plus-fill" />}
-          >
-            <Link to={"create"}>New Product</Link>
-          </Button>
         </Stack>
 
         <Card>
@@ -106,21 +98,49 @@ export default function ListInvoices() {
                     <TableRow hover key={id} tabIndex={-1} role="checkbox">
                       <TableCell align="left">{id}</TableCell>
                       <TableCell align="left">
-                            {createAt}
+                            {formatDate(createAt)}
                       </TableCell>
 
-                      <TableCell align="left">{updateAt}</TableCell>
-
-                      <TableCell align="left">{totalPrice}</TableCell>
+                      <TableCell align="left">{formatDate(updateAt)}</TableCell>
+                      <TableCell align="left">
+                      <Chip label={status} color={
+                        (status === 'DELIVERING' && 'warning') ||
+                        (status === 'CHECKING' && 'info') ||
+                        (status === 'SUCCESS' && 'success') ||
+                        'default'
+                      } variant="outlined" />
+                      </TableCell>
+                      <TableCell align="left">{fCurrency(totalPrice)}</TableCell>
 
                       <TableCell align="right">
-                        <IconButton
-                          size="large"
-                          color="inherit"
-                          onClick={handleOpenMenu}
-                        >
-                          <Iconify icon={"eva:more-vertical-fill"} />
-                        </IconButton>
+                      <TableMoreMenu
+                          open={open}
+                          onOpen={handleOpenMenu}
+                          onClose={handleCloseMenu}
+                          actions={
+                            <>
+                              <MenuItem
+                                onClick={() => {
+                                  handleEditRow(id);
+                                  handleCloseMenu();
+                                }}>
+                                <Iconify
+                                  icon={"eva:edit-fill"}
+                                  sx={{ mr: 2 }}
+                                />
+                                Edit
+                              </MenuItem>
+
+                              <MenuItem sx={{ color: "error.main" }}>
+                                <Iconify
+                                  icon={"eva:trash-2-outline"}
+                                  sx={{ mr: 2 }}
+                                />
+                                Delete
+                              </MenuItem>
+                            </>
+                          }
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -139,35 +159,6 @@ export default function ListInvoices() {
           />
         </Card>
       </Container>
-
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: "top", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            "& .MuiMenuItem-root": {
-              px: 1,
-              typography: "body2",
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: "error.main" }}>
-          <Iconify icon={"eva:trash-2-outline"} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
     </>
   );
 }

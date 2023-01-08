@@ -21,7 +21,6 @@ export const CheckoutInformation = () => {
           display: "grid",
           rowGap: 3,
           columnGap: 2,
-          gridTemplateColumns: { xs: "repeat(1, 1fr)", sm: "repeat(2, 1fr)" },
         }}
       >
         <TextField

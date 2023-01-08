@@ -8,7 +8,7 @@ import getFileData from '../../utils/getFileData';
 // ----------------------------------------------------------------------
 
 export default function MultiFilePreview({
-  files,
+  files = [],
   onRemove,
 }) {
   const hasFile = files.length > 0;

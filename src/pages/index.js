@@ -6,3 +6,4 @@ export { ProductDetailPage } from './customer/product-detail';
 export { default as CheckoutCart } from './customer/checkout';
 export { default as CreateProductPage } from './admin/CreateProduct';
 export { default as InvoicesPage } from './admin/ListInvoices';
+export { default as EditProductPage } from './admin/EditProduct';
