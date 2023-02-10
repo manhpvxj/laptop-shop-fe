@@ -123,7 +123,7 @@ useEffect(() => {
     [setValue, values.cover]
   );
   const handleRemoveAll = () => {
-    setValue("image", []);
+    setValue("images", []);
     setValue("cover", undefined);
   };
 
@@ -162,7 +162,7 @@ useEffect(() => {
       };
       await axiosClient.post('/products/create', product);
       reset();
-      enqueueSnackbar("Success!");
+      enqueueSnackbar("Create product success!", {variant: 'success'});
       navigate("/admin/products");
     } catch (error) {
       console.error(error);

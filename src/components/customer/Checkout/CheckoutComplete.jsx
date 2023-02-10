@@ -27,7 +27,7 @@ export default function CheckoutOrderComplete({ open }) {
   const dispatch = useDispatch();
 
   const handleGoBack = () => {
-    dispatch(removeAllFromCart());
+    dispatch(removeAllFromCart([]));
     navigate('/');
   };
 

@@ -6,11 +6,11 @@ import "./index.css";
 import { store } from "./redux/store";
 import { SnackbarProvider } from "notistack";
 import theme from "./theme";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>

@@ -22,7 +22,8 @@ import Image from "../../../utils/Image";
 import { Link, useNavigate } from "react-router-dom";
 import TableMoreMenu from "../../common/TableMoreMenu";
 import { useDispatch } from "react-redux";
-import { setProductDetail } from '../../../redux/product.slice';
+import { setProductDetail } from "../../../redux/product.slice";
+import { useSnackbar } from "notistack";
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -41,6 +42,8 @@ export default function ProductPage() {
 
   const [page, setPage] = useState(0);
 
+  const [selectedItem, setSelectedItem] = useState();
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [total, setTotal] = useState({});
@@ -49,7 +52,10 @@ export default function ProductPage() {
 
   const dispatch = useDispatch();
 
-  const handleOpenMenu = (event) => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleOpenMenu = (event, id) => {
+    setSelectedItem(id);
     setOpen(event.currentTarget);
   };
 
@@ -65,7 +71,6 @@ export default function ProductPage() {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
-
 
   const [listProducts, setListProducts] = useState([]);
   useEffect(() => {
@@ -84,12 +89,21 @@ export default function ProductPage() {
     getProductsList();
   }, [page, rowsPerPage]);
 
-  
   const handleEditRow = (id) => {
-    const currProduct = listProducts.find((product) => product.id === id);
-    dispatch(setProductDetail(currProduct));
     navigate(`/admin/products/${id}`);
-  }
+  };
+  const handleDeleteRow = (id) => {
+    try {
+      axiosClient.delete(`/products/${id}`);
+      enqueueSnackbar("Delete successfully!", {variant: 'success'});
+      setPage(0);
+    }
+    catch(e) {
+      console.log(e);
+      enqueueSnackbar("Delete fail!", {variant: 'error'});
+    }
+
+  };
   return (
     <>
       <Container>
@@ -153,15 +167,16 @@ export default function ProductPage() {
                       <TableCell align="right">
                         <TableMoreMenu
                           open={open}
-                          onOpen={handleOpenMenu}
+                          onOpen={(event) => handleOpenMenu(event, id)}
                           onClose={handleCloseMenu}
                           actions={
                             <>
                               <MenuItem
                                 onClick={() => {
-                                  handleEditRow(id);
+                                  handleEditRow(selectedItem);
                                   handleCloseMenu();
-                                }}>
+                                }}
+                              >
                                 <Iconify
                                   icon={"eva:edit-fill"}
                                   sx={{ mr: 2 }}
@@ -169,7 +184,13 @@ export default function ProductPage() {
                                 Edit
                               </MenuItem>
 
-                              <MenuItem sx={{ color: "error.main" }}>
+                              <MenuItem
+                                sx={{ color: "error.main" }}
+                                onClick={() => {
+                                  handleDeleteRow(selectedItem);
+                                  handleCloseMenu();
+                                }}
+                              >
                                 <Iconify
                                   icon={"eva:trash-2-outline"}
                                   sx={{ mr: 2 }}

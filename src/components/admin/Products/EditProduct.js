@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 // form
@@ -7,21 +7,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 // @mui
 import { LoadingButton } from "@mui/lab";
-import {
-  Card, InputAdornment, Stack, Typography, Button
-} from "@mui/material";
+import { Card, InputAdornment, Stack, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 // components
 import {
   FormProvider,
-  RHFSelect,
   RHFTextField,
   RHFUploadMultiFile,
   RHFUploadFile,
 } from "../../common/react-hook-form";
-import axiosClient from '../../../api/axiosClient';
-import axios from 'axios';
-import { useSelector } from "react-redux";
+import axiosClient from "../../../api/axiosClient";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setProductDetail } from "../../../redux/product.slice";
 // ----------------------------------------------------------------------
 
 const LabelStyle = styled(Typography)(() => ({
@@ -37,7 +35,16 @@ const LabelStyle = styled(Typography)(() => ({
 export default function ProductEditForm() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
   const { id } = useParams();
+  useEffect(() => {
+    const getCurrentProduct = async () => {
+      const { data } = await axiosClient.get(`/customer/products/${id}`);
+      console.log(data);
+      dispatch(setProductDetail(data));
+    };
+    getCurrentProduct();
+  }, [id]);
   const currentProduct = useSelector((state) => state.product.product.product);
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -46,9 +53,7 @@ export default function ProductEditForm() {
     priceSell: Yup.number().moreThan(0, "Price should not be 0"),
     categoryId: Yup.number().required("Category is required"),
     quantity: Yup.number().required("Quantity is required"),
-    });
-  
-    console.log(currentProduct);
+  });
   const defaultValues = useMemo(
     () => ({
       name: currentProduct?.name,
@@ -79,7 +84,6 @@ export default function ProductEditForm() {
 
   const values = watch();
 
-
   useEffect(() => {
     if (currentProduct) {
       reset(defaultValues);
@@ -105,18 +109,19 @@ export default function ProductEditForm() {
   const handleDropCover = useCallback(
     (acceptedFile) => {
       const file = acceptedFile[0];
-      if(file) {
-        setValue("cover", 
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      )
+      if (file) {
+        setValue(
+          "cover",
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        );
       }
     },
     [setValue, values.cover]
   );
   const handleRemoveAll = () => {
-    setValue("image", []);
+    setValue("images", []);
     setValue("cover", undefined);
   };
 
@@ -126,20 +131,25 @@ export default function ProductEditForm() {
     setValue("images", filteredItems);
   };
 
-  const handleUploadImages = async (cover,images) => {
+  const handleUploadImages = async (cover, images) => {
     const urls = [];
     images.unshift(cover);
-    for( const element of images) {
+    for (const element of images) {
+      if (typeof element === "string") {
+        urls.push(element);
+        return;
+      }
       const formData = new FormData();
-      formData.append('file', element);
-      formData.append('upload_preset', process.env.REACT_APP_UPLOAD_PRESET);
-      const { data } = await axios.create().post(process.env.REACT_APP_API_CLOUDINARY_URL, formData);
+      formData.append("file", element);
+      formData.append("upload_preset", process.env.REACT_APP_UPLOAD_PRESET);
+      const { data } = await axios
+        .create()
+        .post(process.env.REACT_APP_API_CLOUDINARY_URL, formData);
       urls.push(data?.url);
     }
     return urls;
-  }
+  };
 
-  
   const onSubmit = async (data) => {
     try {
       const urls = await handleUploadImages(data.cover, data.images);
@@ -165,17 +175,35 @@ export default function ProductEditForm() {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Card sx={{ p: 3 }}>
         <Stack spacing={3}>
-          <RHFTextField name="name" label="Product Name" disabled/>
+          <RHFTextField
+            name="name"
+            label="Product Name"
+            disabled
+            InputLabelProps={{ shrink: true }}
+          />
 
-          <RHFTextField name="description" label="Description" />
-          <RHFTextField name="categoryId" label="Category" value={values.categoryId.name} disabled/>
+          <RHFTextField
+            name="description"
+            label="Description"
+            InputLabelProps={{ shrink: true }}
+          />
+          <RHFTextField
+            name="categoryId"
+            label="Category"
+            value={currentProduct?.category?.name}
+            InputLabelProps={{ shrink: true }}
+            selected
+            disabled
+          />
 
           <RHFTextField
             name="priceSell"
             label="Sale Price"
             placeholder="0.00"
             value={getValues("priceSell") === 0 ? "" : getValues("priceSell")}
-            onChange={(event) => setValue("priceSell", Number(event.target.value))}
+            onChange={(event) =>
+              setValue("priceSell", Number(event.target.value))
+            }
             InputLabelProps={{ shrink: true }}
             InputProps={{
               startAdornment: (
@@ -184,7 +212,11 @@ export default function ProductEditForm() {
               type: "number",
             }}
           />
-          <RHFTextField name="quantity" label="Quantity" />
+          <RHFTextField
+            name="quantity"
+            label="Quantity"
+            InputLabelProps={{ shrink: true }}
+          />
           <div>
             <LabelStyle>Cover</LabelStyle>
             <RHFUploadFile
@@ -206,15 +238,15 @@ export default function ProductEditForm() {
           </div>
         </Stack>
         <Stack alignItems={"flex-end"} spacing={2}>
-        <Button color="inherit" size="small" onClick={handleRemoveAll}>
-              Remove all images
-            </Button>
+          <Button color="inherit" size="small" onClick={handleRemoveAll}>
+            Remove all images
+          </Button>
           <LoadingButton
             type="submit"
             variant="contained"
             size="large"
             loading={isSubmitting}
-            sx={{mt: 5}}
+            sx={{ mt: 5 }}
           >
             Save Changes
           </LoadingButton>

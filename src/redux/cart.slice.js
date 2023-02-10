@@ -52,9 +52,7 @@ export const cartSlice = createSlice({
         removeProductFromCart: (state, action) => {
             state.cart = state.cart.filter((product) => product.id !== action.payload);
         },
-        removeAllFromCart: (state, action) => {
-            state.cart = initialState;
-        },
+        removeAllFromCart: () => initialState,
         setTotalPrice: (state, action) => {
             const carts = action.payload;
             state.totalPrice = sum(carts.map((item) => item.priceSell * item.quantity));

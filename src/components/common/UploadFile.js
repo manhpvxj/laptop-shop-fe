@@ -14,7 +14,7 @@ const DropZoneStyle = styled("div")(() => ({
   "&:hover": { opacity: 0.72, cursor: "pointer" },
 }));
 
-export default function UploadFiles({ file, onDrop, onUpload, onRemove, sx }) {
+export default function UploadFiles({ file, onDrop, sx }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <Box sx={{ width: "100%", ...sx }}>
